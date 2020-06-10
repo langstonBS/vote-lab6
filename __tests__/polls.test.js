@@ -24,7 +24,7 @@ describe('votes routes', () => {
   beforeEach(async () => {
     organization = await Organization.create({
       title: 'Langston Lots',
-      description: ' parking lots on blimps so that there is always parking in the sky',
+      description: 'parking lots on blimps so that there is always parking in the sky',
       imageUrl: 'thereisanimage.jpg'
     });
   });
@@ -41,7 +41,7 @@ describe('votes routes', () => {
         organization: organization._id,
         title: 'the poll',
         description: 'its a pole',
-        list: 1
+        options: [1, 2]
       })
       .then(res => {
         expect(res.body).toEqual({
@@ -49,10 +49,63 @@ describe('votes routes', () => {
           organization: organization.id,
           title: 'the poll',
           description: 'its a pole',
-          list: 1,
+          options:  ["1", "2"],
           __v: 0
         });
       });
-    
   });
+
+  it('GETS a poll via GET', async () => {
+    return Poll.create(
+      {
+        organization: organization._id,
+        title: 'the poll',
+        description: 'its a pole',
+        options: [1, 2]
+      }
+    )
+      .then(() => request(app).get(`/api/v1/polls`))
+      .then(res => {
+        expect(res.body).toEqual([{
+          _id: expect.anything(),
+          organization: {
+            _id: expect.anything(),
+            title: "Langston Lots"
+          },
+          title: 'the poll',
+          description: 'its a pole',
+          options: ["1", "2"],
+          __v: 0
+        }]);
+      });
+  });
+
+  it('GETS a single poll via GET ID', async () => {
+    return Poll.create(
+      {
+        organization: organization._id,
+        title: 'the poll',
+        description: 'its a pole',
+        options: [1, 2]
+      }
+    )
+      .then(poll => request(app).get(`/api/v1/polls/${poll.id}`))
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.anything(),
+          organization: {
+            _id: expect.anything(),
+            title: 'Langston Lots',
+            description: 'parking lots on blimps so that there is always parking in the sky'
+          },
+          title: 'the poll',
+          description: 'its a pole',
+          options: ["1", "2"],
+          __v: 0
+        });
+      });
+  });
+
+
+
 });
