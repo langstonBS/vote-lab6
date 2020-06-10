@@ -36,8 +36,7 @@ describe('votes routes', () => {
           _id: expect.anything(),
           title: 'Langston Lots',
           description: ' parking lots on blimps so that there is always parking in the sky',
-          imageUrl: 'thereisanimage.jpg',
-          __v: 0
+          imageUrl: 'thereisanimage.jpg'
         });
       });
   });
@@ -72,8 +71,7 @@ describe('votes routes', () => {
           _id: expect.anything(),
           title: 'Langston Lots',
           description: ' parking lots on blimps so that there is always parking in the sky',
-          imageUrl: 'thereisanimage.jpg',
-          __v: 0
+          imageUrl: 'thereisanimage.jpg'
         });
       });
   });
@@ -95,8 +93,7 @@ describe('votes routes', () => {
           _id: expect.anything(),
           title: 'Langston Lots',
           description: 'me',
-          imageUrl: 'thereisanimage.jpg',
-          __v: 0
+          imageUrl: 'thereisanimage.jpg'
         });
       });
   });
@@ -114,8 +111,7 @@ describe('votes routes', () => {
           _id: expect.anything(),
           title: 'Langston Lots',
           description: ' parking lots on blimps so that there is always parking in the sky',
-          imageUrl: 'thereisanimage.jpg',
-          __v: 0
+          imageUrl: 'thereisanimage.jpg'
         });
       });
   });
