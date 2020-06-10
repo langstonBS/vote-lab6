@@ -17,12 +17,12 @@ describe('votes routes', () => {
     return mongoose.connection.dropDatabase();
   });
 
-  afterAll(async () => {
+  afterAll(async() => {
     await mongoose.connection.close();
     return mongod.stop();
   });
 
-  it('creates user vea post', () => {
+  it('CREATES user vea POST', () => {
     return request(app)
       .post('/api/v1/users')
       .send({
@@ -44,7 +44,9 @@ describe('votes routes', () => {
         });
       });
   });
-  it('fails to create user vea post', () => {
+
+
+  it('fails to CREATE user vea POST', () => {
     return request(app)
       .post('/api/v1/user')
       .send({
@@ -85,7 +87,8 @@ describe('votes routes', () => {
       });
   });
 
-  it('gits user vea GET', () => {
+
+  it('GETS user vea GET', () => {
     return User.create({
       name: 'langston Thats me',
       phone: '(555) 555-555',
@@ -107,7 +110,8 @@ describe('votes routes', () => {
       });
   });
 
-  it('gits user vea GET', () => {
+
+  it('UPDATES user vea PATCH', () => {
     return User.create({
       name: 'langston Thats me',
       phone: '(555) 555-555',
@@ -115,7 +119,8 @@ describe('votes routes', () => {
       communicationMedium: 'phone',
       imageUrl: 'im an dimmiage'
     })
-      .then(user => request(app).patch(`/api/v1/users/${user.id}`))
+      .then(user => request(app).patch(`/api/v1/users/${user.id}`)
+        .send({ name: 'Not me' }))
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.anything(),
@@ -128,6 +133,5 @@ describe('votes routes', () => {
         });
       });
   });
-
-
 });
+
