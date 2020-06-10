@@ -22,6 +22,7 @@ describe('votes routes', () => {
     return mongod.stop();
   });
 
+  
   it('CREATES organization vea POST', () => {
     return request(app)
       .post('/api/v1/organizations')
@@ -42,7 +43,6 @@ describe('votes routes', () => {
   });
   
 
-
   it('GETS organization vea GET', () => {
     return Organization.create([{
       title: 'Langston Lots',
@@ -58,7 +58,6 @@ describe('votes routes', () => {
         }]);
       });
   });
-
 
 
   it('GETS organization vea GET by id', () => {
@@ -78,6 +77,7 @@ describe('votes routes', () => {
         });
       });
   });
+
 
   it('UPDATES organization vea PATCH', () => {
     return Organization.create({
@@ -119,7 +119,5 @@ describe('votes routes', () => {
         });
       });
   });
-
-
 
 });
