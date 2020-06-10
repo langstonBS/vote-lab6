@@ -49,7 +49,7 @@ describe('votes routes', () => {
           organization: organization.id,
           title: 'the poll',
           description: 'its a pole',
-          options:  ["1", "2"],
+          options: ["1", "2"],
           __v: 0
         });
       });
@@ -106,6 +106,51 @@ describe('votes routes', () => {
       });
   });
 
+  it('UPDATES polls vea PATCH', () => {
+    return Poll.create(
+      {
+        organization: organization._id,
+        title: 'the poll',
+        description: 'its a pole',
+        options: [1, 2]
+      }
+    )
+      .then(poll => request(app)
+        .patch(`/api/v1/polls/${poll.id}`)
+        .send({ title: 'NEW POLL', description: 'IM ME' }))
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.anything(),
+          organization: organization.id,
+          title: 'NEW POLL',
+          description: 'IM ME',
+          options: ["1", "2"],
+          __v: 0
+        });
+      });
+  });
 
-
+  it('DELETES polls vea DELETE', () => {
+    return Poll.create(
+      {
+        organization: organization._id,
+        title: 'the poll',
+        description: 'its a pole',
+        options: [1, 2]
+      })
+      .then(poll => request(app).delete(`/api/v1/polls/${poll.id}`))
+      .then(res => {
+        expect(res.body).toEqual(
+          {
+            _id: expect.anything(),
+            organization: organization.id,
+            title: 'the poll',
+            description: 'its a pole',
+            options: ['1', '2'],
+            __v: 0
+          });
+      });
+  });
 });
+
+
