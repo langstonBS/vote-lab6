@@ -7,8 +7,8 @@ const request = require('supertest');
 const app = require('../lib/app');
 const User = require('../lib/models/User');
 
-describe('votes routes', () => {
-  beforeAll(async () => {
+describe('USERS routes', () => {
+  beforeAll(async() => {
     const uri = await mongod.getUri();
     return connect(uri);
   });
@@ -57,8 +57,8 @@ describe('votes routes', () => {
       })
       .then(res => {
         expect(res.body).toEqual({
-          "message": "Not Found",
-          "status": 404,
+          'message': 'Not Found',
+          'status': 404,
         });
       });
   });

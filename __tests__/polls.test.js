@@ -10,7 +10,7 @@ const Poll = require('../lib/models/Poll');
 
 
 
-describe('votes routes', () => {
+describe('POLLS routes', () => {
   beforeAll(async () => {
     const uri = await mongod.getUri();
     return connect(uri);

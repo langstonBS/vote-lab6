@@ -5,11 +5,12 @@ const connect = require('../lib/utils/connect');
 
 const request = require('supertest');
 const app = require('../lib/app');
-const Organization = require('../lib/models/Organization');
+const Poll = require('../lib/models/Poll');
 const User = require('../lib/models/User');
-const Membership = require('../lib/models/Membership');
+const Vote = require('../lib/models/Vote');
+const Organization = require('../lib/models/Organization');
 
-describe('MEMBERSHIP routes', () => {
+describe('VOTES routes', () => {
   beforeAll(async() => {
     const uri = await mongod.getUri();
     return connect(uri);
@@ -19,14 +20,23 @@ describe('MEMBERSHIP routes', () => {
     return mongoose.connection.dropDatabase();
   });
 
-  let organization;
+
+  let poll;
   beforeEach(async() => {
-    organization = await Organization.create({
+    let organization = await Organization.create({
       title: 'Langston Lots',
       description: 'parking lots on blimps so that there is always parking in the sky',
       imageUrl: 'thereisanimage.jpg'
     });
+
+    poll = await Poll.create({
+      organization: organization._id,
+      title: 'the poll',
+      description: 'its a pole',
+      options: [1, 2]
+    });
   });
+
 
   let user;
   beforeEach(async() => {
@@ -44,12 +54,14 @@ describe('MEMBERSHIP routes', () => {
     return mongod.stop();
   });
 
-  it('FAIL TO CREATE a membership with POST', () => {
+  
+  it('FAIL TO CREATE a vote with POST', () => {
     return request(app)
-      .post('/api/v1/membership')
+      .post('/api/v1/vote')
       .send({
-        organization: organization._id,
-        user: user._id
+        user: user._id,
+        poll: poll.id,
+
       })
       .then(res => {
         expect(res.body).toEqual({
@@ -60,61 +72,63 @@ describe('MEMBERSHIP routes', () => {
       });
   });
 
-  it('CREATE a membership with POST', () => {
+  it('CREATE a vote with POST', () => {
     return request(app)
-      .post('/api/v1/memberships')
+      .post('/api/v1/votes')
       .send({
-        organization: organization._id,
-        user: user._id
+        user: user._id,
+        poll: poll._id,
+
       })
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.anything(),
-          organization: organization.id,
+          options: [],
           user: user.id,
+          poll: poll.id,
           __v: 0
         });
       });
   });
 
-
-
-  it('GIT a membership with an Organization with GET', async() => {
-    await Membership.create({
-      organization: organization._id,
-      user: user._id
-    });
-    return request(app).get(`/api/v1/memberships?organization=${organization._id}`)
-      .then(res => {
-        expect(res.body).toEqual([{
-          _id: expect.anything(),
-          organization: expect.anything(),
-          user:{
-            _id: expect.anything(),
-            name: 'langston Thats me'
-          },
-          __v: 0
-        }]);
-      });
-  });
-
-  it('DELETES membership vea DELETE', () => {
-    return Membership.create(
-      {
-        organization: organization._id,
-        user: user._id
+  it('CREATE a vote with POST', () => {
+    return request(app)
+      .post('/api/v1/votes')
+      .send({
+        user: user._id,
+        poll: poll._id,
       })
-      .then(membership => request(app).delete(`/api/v1/memberships/${membership.id}`))
+
       .then(res => {
-        expect(res.body).toEqual(
-          {
-            _id: expect.anything(),
-            organization: organization.id,
-            user: user.id,
-            __v: 0
-          });
+        expect(res.body).toEqual({
+          _id: expect.anything(),
+          options: [],
+          user: user.id,
+          poll: poll.id,
+          __v: 0
+        });
       });
   });
+
+  it('UPDATES votes vea PATCH', () => {
+    return Vote.create({
+      user: user._id,
+      poll: poll._id,
+    })
+      .then(vote => {
+        return request(app)
+          .patch(`/api/v1/votes/${vote.id}`)
+          .send({ options: ['1'] });
+      })
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.anything(),
+          options: ['1'],
+          user: user.id,
+          poll: poll.id,
+          __v: 0
+        });
+      });
+  });
+
 });
-
-

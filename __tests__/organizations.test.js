@@ -7,8 +7,8 @@ const request = require('supertest');
 const app = require('../lib/app');
 const Organization = require('../lib/models/Organization');
 
-describe('votes routes', () => {
-  beforeAll(async () => {
+describe('ORGANIZATION routes', () => {
+  beforeAll(async() => {
     const uri = await mongod.getUri();
     return connect(uri);
   });
@@ -17,7 +17,7 @@ describe('votes routes', () => {
     return mongoose.connection.dropDatabase();
   });
 
-  afterAll(async () => {
+  afterAll(async() => {
     await mongoose.connection.close();
     return mongod.stop();
   });
@@ -46,7 +46,7 @@ describe('votes routes', () => {
       description: ' parking lots on blimps so that there is always parking in the sky',
       imageUrl: 'thereisanimage.jpg'
     }])
-      .then(organization => request(app).get(`/api/v1/organizations`))
+      .then(organization => request(app).get('/api/v1/organizations'))
       .then(res => {
         expect(res.body).toEqual([{
           _id: expect.anything(),
