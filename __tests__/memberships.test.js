@@ -10,7 +10,7 @@ const User = require('../lib/models/User');
 const Membership = require('../lib/models/Membership');
 
 describe('votes routes', () => {
-  beforeAll(async () => {
+  beforeAll(async() => {
     const uri = await mongod.getUri();
     return connect(uri);
   });
@@ -20,7 +20,7 @@ describe('votes routes', () => {
   });
 
   let organization;
-  beforeEach(async () => {
+  beforeEach(async() => {
     organization = await Organization.create({
       title: 'Langston Lots',
       description: 'parking lots on blimps so that there is always parking in the sky',
@@ -29,7 +29,7 @@ describe('votes routes', () => {
   });
 
   let user;
-  beforeEach(async () => {
+  beforeEach(async() => {
     user = await User.create({
       name: 'langston Thats me',
       phone: '(555) 555-555',
@@ -39,7 +39,7 @@ describe('votes routes', () => {
     });
   });
 
-  afterAll(async () => {
+  afterAll(async() => {
     await mongoose.connection.close();
     return mongod.stop();
   });
@@ -77,19 +77,42 @@ describe('votes routes', () => {
       });
   });
 
-  it('GIT a membership with an Organization with GET', () => {
-    return Membership.create({
-      rganization: organization._id,
+
+
+  it('GIT a membership with an Organization with GET', async() => {
+    await Membership.create({
+      organization: organization._id,
       user: user._id
-    })
-      .then(request(app).get(`api/v1/memberships?ORG=${organization.id}`))
+    });
+    return request(app).get(`/api/v1/memberships?user=${user._id}`)
       .then(res => {
-        expect(res.body).toEqual({
+        expect(res.body).toEqual([{
           _id: expect.anything(),
-          organization: organization.id,
-          user: user.id,
+          organization: expect.anything(),
+          user:{
+            _id: expect.anything(),
+            name: 'langston Thats me'
+          },
           __v: 0
-        });
+        }]);
+      });
+  });
+
+  it('DELETES membership vea DELETE', () => {
+    return Membership.create(
+      {
+        organization: organization._id,
+        user: user._id
+      })
+      .then(membership => request(app).delete(`/api/v1/memberships/${membership.id}`))
+      .then(res => {
+        expect(res.body).toEqual(
+          {
+            _id: expect.anything(),
+            organization: organization.id,
+            user: user.id,
+            __v: 0
+          });
       });
   });
 });
