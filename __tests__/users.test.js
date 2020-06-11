@@ -39,8 +39,7 @@ describe('votes routes', () => {
           phone: '(555) 555-555',
           email: 'to personal',
           communicationMedium: 'phone',
-          imageUrl: 'im an dimmiage',
-          __v: 0
+          imageUrl: 'im an dimmiage'
         });
       });
   });
@@ -81,8 +80,7 @@ describe('votes routes', () => {
           phone: '(555) 555-555',
           email: 'to personal',
           communicationMedium: 'phone',
-          imageUrl: 'im an dimmiage',
-          __v: 0
+          imageUrl: 'im an dimmiage'
         });
       });
   });
@@ -104,8 +102,7 @@ describe('votes routes', () => {
           phone: '(555) 555-555',
           email: 'to personal',
           communicationMedium: 'phone',
-          imageUrl: 'im an dimmiage',
-          __v: 0
+          imageUrl: 'im an dimmiage'
         });
       });
   });
@@ -128,8 +125,7 @@ describe('votes routes', () => {
           phone: '(555) 555-555',
           email: 'to personal',
           communicationMedium: 'phone',
-          imageUrl: 'im an dimmiage',
-          __v: 0
+          imageUrl: 'im an dimmiage'
         });
       });
   });
