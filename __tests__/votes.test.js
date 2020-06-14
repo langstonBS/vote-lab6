@@ -32,7 +32,7 @@ describe('VOTES routes', () => {
       organization: organization._id,
       title: 'the poll',
       description: 'its a pole',
-      options: [1, 2]
+      options: ['red', 'blue', 'green']
     });
   });
 
@@ -69,6 +69,7 @@ describe('VOTES routes', () => {
       });
   });
 
+  
   it('CREATE a vote with POST', () => {
     return request(app)
       .post('/api/v1/votes')
@@ -98,12 +99,12 @@ describe('VOTES routes', () => {
       .then(vote => {
         return request(app)
           .patch(`/api/v1/votes/${vote.id}`)
-          .send({ options: ['1'] });
+          .send({ options: ['blue'] });
       })
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.anything(),
-          options: ['1'],
+          options: ['blue'],
           user: user.id,
           poll: poll.id,
           __v: 0
