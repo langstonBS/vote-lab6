@@ -20,7 +20,6 @@ describe('VOTES routes', () => {
     return mongoose.connection.dropDatabase();
   });
 
-
   let poll;
   beforeEach(async() => {
     let organization = await Organization.create({
@@ -36,7 +35,6 @@ describe('VOTES routes', () => {
       options: [1, 2]
     });
   });
-
 
   let user;
   beforeEach(async() => {
@@ -54,7 +52,6 @@ describe('VOTES routes', () => {
     return mongod.stop();
   });
 
-  
   it('FAIL TO CREATE a vote with POST', () => {
     return request(app)
       .post('/api/v1/vote')
@@ -91,24 +88,7 @@ describe('VOTES routes', () => {
       });
   });
 
-  it('CREATE a vote with POST', () => {
-    return request(app)
-      .post('/api/v1/votes')
-      .send({
-        user: user._id,
-        poll: poll._id,
-      })
 
-      .then(res => {
-        expect(res.body).toEqual({
-          _id: expect.anything(),
-          options: [],
-          user: user.id,
-          poll: poll.id,
-          __v: 0
-        });
-      });
-  });
 
   it('UPDATES votes vea PATCH', () => {
     return Vote.create({
@@ -124,6 +104,25 @@ describe('VOTES routes', () => {
         expect(res.body).toEqual({
           _id: expect.anything(),
           options: ['1'],
+          user: user.id,
+          poll: poll.id,
+          __v: 0
+        });
+      });
+  });
+
+  it('GETS a vote with GET', () => {
+    return request(app)
+      .post('/api/v1/votes')
+      .send({
+        user: user._id,
+        poll: poll._id,
+      })
+
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.anything(),
+          options: [],
           user: user.id,
           poll: poll.id,
           __v: 0

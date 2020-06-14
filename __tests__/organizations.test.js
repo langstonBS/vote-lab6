@@ -6,6 +6,8 @@ const connect = require('../lib/utils/connect');
 const request = require('supertest');
 const app = require('../lib/app');
 const Organization = require('../lib/models/Organization');
+const User = require('../lib/models/User');
+const Membership = require('../lib/models/Membership');
 
 describe('ORGANIZATION routes', () => {
   beforeAll(async() => {
@@ -56,19 +58,52 @@ describe('ORGANIZATION routes', () => {
       });
   });
 
-  it('GETS organization vea GET by id', () => {
-    return Organization.create({
+
+  it('GETS organization vea GET by id', async() => {
+
+
+    const organization = await Organization.create({
       title: 'Langston Lots',
       description: ' parking lots on blimps so that there is always parking in the sky',
       imageUrl: 'thereisanimage.jpg'
-    })
-      .then(organization => request(app).get(`/api/v1/organizations/${organization.id}`))
+    });
+
+    const user = await User.create({
+      name: 'langston Thats me',
+      phone: '(555) 555-555',
+      email: 'to personal',
+      communicationMedium: 'phone',
+      imageUrl: 'im an dimmiage'
+    });
+
+    const user2 = await User.create({
+      name: 'langston e',
+      phone: '(555) -555',
+      email: 'to ',
+      communicationMedium: 'phone',
+      imageUrl: 'im an dimmiage'
+    });
+
+    await Membership.create(
+      [{
+        organization: organization._id,
+        user: user._id
+      }, { 
+        organization: organization._id,
+        user: user2._id
+      }]
+    );
+
+    return request(app)
+      .get(`/api/v1/organizations/${organization.id}`)
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.anything(),
           title: 'Langston Lots',
           description: ' parking lots on blimps so that there is always parking in the sky',
-          imageUrl: 'thereisanimage.jpg'
+          imageUrl: 'thereisanimage.jpg',
+          memberships: [{ _id: expect.anything(), organization: expect.anything(), user: expect.anything() },
+            { _id: expect.anything(), organization: expect.anything(), user: expect.anything() }]
         });
       });
   });
@@ -111,4 +146,5 @@ describe('ORGANIZATION routes', () => {
       });
   });
 });
+
 
