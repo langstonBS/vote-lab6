@@ -32,7 +32,8 @@ describe('USERS routes', () => {
         phone: '(555) 555-555',
         email: 'to personal',
         communicationMedium: 'phone',
-        imageUrl: 'im an dimmiage'
+        imageUrl: 'im an dimmiage',
+        password:'test12345'
       })
       .then(res => {
         expect(res.body).toEqual({
@@ -55,7 +56,8 @@ describe('USERS routes', () => {
         phone: '(555) 555-555',
         email: 'to personal',
         communicationMedium: 'phone',
-        imageUrl: 'im an dimmiage'
+        imageUrl: 'im an dimmiage',
+        password:'test12345'
       })
       .then(res => {
         expect(res.body).toEqual({
@@ -72,7 +74,8 @@ describe('USERS routes', () => {
       phone: '(555) 555-555',
       email: 'to personal',
       communicationMedium: 'phone',
-      imageUrl: 'im an dimmiage'
+      imageUrl: 'im an dimmiage',
+      password:'test12345'
     })
       .then(user => request(app).delete(`/api/v1/users/${user.id}`))
       .then(res => {
@@ -94,7 +97,8 @@ describe('USERS routes', () => {
       phone: '(555) 7658-555',
       email: 'to personal',
       communicationMedium: 'phone',
-      imageUrl: 'im an dimmiage'
+      imageUrl: 'im an dimmiage',
+      password:'test12345'
     });
 
     const org = await Organization.create({
@@ -143,7 +147,8 @@ describe('USERS routes', () => {
       phone: '(555) 555-555',
       email: 'to personal',
       communicationMedium: 'phone',
-      imageUrl: 'im an dimmiage'
+      imageUrl: 'im an dimmiage',
+      password:'test12345'
     })
       .then(user => request(app).patch(`/api/v1/users/${user.id}`)
         .send({ name: 'Not me' }))

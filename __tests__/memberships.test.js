@@ -35,7 +35,8 @@ describe('MEMBERSHIP routes', () => {
       phone: '(555) 555-555',
       email: 'to personal',
       communicationMedium: 'phone',
-      imageUrl: 'im an dimmiage'
+      imageUrl: 'im an dimmiage',
+      password:'test12345'
     });
   });
 
