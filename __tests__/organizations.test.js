@@ -19,13 +19,33 @@ describe('ORGANIZATION routes', () => {
     return mongoose.connection.dropDatabase();
   });
 
+  const agent = request.agent(app);
+
+  let user;
+  beforeEach(async() => {
+    user = await User.create({
+      name: 'langston Thats me',
+      phone: '(555) 555-555',
+      email: 'to personal',
+      communicationMedium: 'phone',
+      imageUrl: 'im an dimmiage',
+      password: '1234'
+    });
+    return agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'to personal',
+        password: '1234'
+      });
+  });
+
   afterAll(async() => {
     await mongoose.connection.close();
     return mongod.stop();
   });
 
   it('CREATES organization vea POST', () => {
-    return request(app)
+    return agent
       .post('/api/v1/organizations')
       .send({
         title: 'Langston Lots',
@@ -43,12 +63,14 @@ describe('ORGANIZATION routes', () => {
   });
   
   it('GETS organization vea GET', () => {
-    return Organization.create([{
+    const organization = Organization.create([{
       title: 'Langston Lots',
       description: ' parking lots on blimps so that there is always parking in the sky',
       imageUrl: 'thereisanimage.jpg'
-    }])
-      .then(organization => request(app).get('/api/v1/organizations'))
+    }]);
+      
+    return agent
+      .get('/api/v1/organizations')
       .then(res => {
         expect(res.body).toEqual([{
           _id: expect.anything(),
@@ -68,33 +90,14 @@ describe('ORGANIZATION routes', () => {
       imageUrl: 'thereisanimage.jpg'
     });
 
-    const user = await User.create({
-      name: 'langston Thats me',
-      phone: '(555) 555-555',
-      email: 'to personal',
-      communicationMedium: 'phone',
-      imageUrl: 'im an dimmiage'
-    });
-
-    const user2 = await User.create({
-      name: 'langston e',
-      phone: '(555) -555',
-      email: 'to ',
-      communicationMedium: 'phone',
-      imageUrl: 'im an dimmiage'
-    });
-
     await Membership.create(
       [{
         organization: organization._id,
         user: user._id
-      }, { 
-        organization: organization._id,
-        user: user2._id
       }]
     );
 
-    return request(app)
+    return agent
       .get(`/api/v1/organizations/${organization.id}`)
       .then(res => {
         expect(res.body).toEqual({
@@ -102,23 +105,21 @@ describe('ORGANIZATION routes', () => {
           title: 'Langston Lots',
           description: ' parking lots on blimps so that there is always parking in the sky',
           imageUrl: 'thereisanimage.jpg',
-          memberships: [{ _id: expect.anything(), organization: expect.anything(), user: expect.anything() },
-            { _id: expect.anything(), organization: expect.anything(), user: expect.anything() }]
+          memberships: [{ _id: expect.anything(), organization: expect.anything(), user: expect.anything() }]
         });
       });
   });
 
-  it('UPDATES organization vea PATCH', () => {
-    return Organization.create({
+  it('UPDATES organization vea PATCH', async() => {
+    const organization =  await Organization.create({
       title: 'Langston Lots',
       description: ' parking lots on blimps so that there is always parking in the sky',
       imageUrl: 'thereisanimage.jpg'
-    })
-      .then(organization => {
-        return request(app)
-          .patch(`/api/v1/organizations/${organization.id}`)
-          .send({ description: 'me' });
-      })
+    });
+      
+    return agent
+      .patch(`/api/v1/organizations/${organization.id}`)
+      .send({ description: 'me' })
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.anything(),
@@ -129,13 +130,16 @@ describe('ORGANIZATION routes', () => {
       });
   });
 
-  it('DELETES organization vea DELETE by id', () => {
-    return Organization.create({
+  it('DELETES organization vea DELETE by id', async() => {
+    const organization =  await Organization.create({
       title: 'Langston Lots',
       description: ' parking lots on blimps so that there is always parking in the sky',
       imageUrl: 'thereisanimage.jpg'
-    })
-      .then(organization => request(app).delete(`/api/v1/organizations/${organization.id}`))
+    });
+
+    
+    return agent
+      .delete(`/api/v1/organizations/${organization.id}`)
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.anything(),
