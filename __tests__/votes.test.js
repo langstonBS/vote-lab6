@@ -36,6 +36,8 @@ describe('VOTES routes', () => {
     });
   });
 
+  const agent = request.agent(app);
+
   let user;
   beforeEach(async() => {
     user = await User.create({
@@ -44,17 +46,23 @@ describe('VOTES routes', () => {
       email: 'to personal',
       communicationMedium: 'phone',
       imageUrl: 'im an dimmiage',
-      password:'test12345'
+      password: '1234'
     });
+    return agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'to personal',
+        password: '1234'
+      });
   });
-
+  
   afterAll(async() => {
     await mongoose.connection.close();
     return mongod.stop();
   });
 
   it('FAIL TO CREATE a vote with POST', () => {
-    return request(app)
+    return agent
       .post('/api/v1/vote')
       .send({
         user: user._id,
@@ -71,8 +79,8 @@ describe('VOTES routes', () => {
   });
 
   
-  it('CREATE a vote with POST', () => {
-    return request(app)
+  it('CREATE a vote with POST', async() => {
+    return agent
       .post('/api/v1/votes')
       .send({
         user: user._id,
@@ -92,16 +100,14 @@ describe('VOTES routes', () => {
 
 
 
-  it('UPDATES votes vea PATCH', () => {
-    return Vote.create({
+  it('UPDATES votes vea PATCH', async () => {
+    const vote = await Vote.create({
       user: user._id,
       poll: poll._id,
-    })
-      .then(vote => {
-        return request(app)
-          .patch(`/api/v1/votes/${vote.id}`)
-          .send({ options: ['blue'] });
-      })
+    });
+    return agent
+      .patch(`/api/v1/votes/${vote.id}`)
+      .send({ options: ['blue'] })
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.anything(),
@@ -114,7 +120,7 @@ describe('VOTES routes', () => {
   });
 
   it('GETS a vote with GET', () => {
-    return request(app)
+    return agent
       .post('/api/v1/votes')
       .send({
         user: user._id,
