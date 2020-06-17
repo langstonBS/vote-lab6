@@ -28,6 +28,8 @@ describe('MEMBERSHIP routes', () => {
     });
   });
 
+  const agent = request.agent(app);
+
   let user;
   beforeEach(async() => {
     user = await User.create({
@@ -36,8 +38,14 @@ describe('MEMBERSHIP routes', () => {
       email: 'to personal',
       communicationMedium: 'phone',
       imageUrl: 'im an dimmiage',
-      password:'test12345'
+      password: '1234'
     });
+    return agent
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'to personal',
+        password: '1234'
+      });
   });
 
   afterAll(async() => {
@@ -46,7 +54,7 @@ describe('MEMBERSHIP routes', () => {
   });
 
   it('FAIL TO CREATE a membership with POST', () => {
-    return request(app)
+    return agent
       .post('/api/v1/membership')
       .send({
         organization: organization._id,
@@ -62,7 +70,7 @@ describe('MEMBERSHIP routes', () => {
   });
 
   it('CREATE a membership with POST', () => {
-    return request(app)
+    return agent
       .post('/api/v1/memberships')
       .send({
         organization: organization._id,
@@ -85,7 +93,8 @@ describe('MEMBERSHIP routes', () => {
       organization: organization._id,
       user: user._id
     });
-    return request(app).get(`/api/v1/memberships?organization=${organization._id}`)
+    return agent
+      .get(`/api/v1/memberships?organization=${organization._id}`)
       .then(res => {
         expect(res.body).toEqual([{
           _id: expect.anything(),
@@ -99,13 +108,16 @@ describe('MEMBERSHIP routes', () => {
       });
   });
 
-  it('DELETES membership vea DELETE', () => {
-    return Membership.create(
+  it('DELETES membership vea DELETE', async() => {
+    const membership = await Membership.create(
       {
         organization: organization._id,
         user: user._id
-      })
-      .then(membership => request(app).delete(`/api/v1/memberships/${membership.id}`))
+      });
+
+
+    return agent
+      .delete(`/api/v1/memberships/${membership.id}`)
       .then(res => {
         expect(res.body).toEqual(
           {
