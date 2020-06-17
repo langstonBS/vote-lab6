@@ -16,3 +16,4 @@ jobs:
     - run: npm test
       env:
         CI: true
+        APP_SECRET: If_We_Shadows_Have_Offended_Think_But_This_And_All_Is_Mended_That_You_Have_But_Slumbered_Here_While_These_Visions_Did_Appear_And_This_Weak_And_Idle_Theme_No_More_Yielding_But_a_Dream_Gentles_Do_Not_Reprehend
